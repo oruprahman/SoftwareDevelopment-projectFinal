@@ -12,10 +12,10 @@ public:
     void signup();
     void addHospital();
     void showAppointments();
-    void search_doctor_by_hospital();
+    void search_doctor();
 } obj;
 int main() {
-    cout << "\n================ WELCOME TO HEALTH CARE SYSTEM ================\n";
+    cout << "\n================ WELCOME TO HOSPITAL APPOINMENT MANAGEMENT SYSTEM ================\n";
     int choose;
     cout << "1. Sign Up" << endl;
     cout << "2. Login" << endl;
@@ -30,7 +30,7 @@ int main() {
         obj.login();
         break;
     default:
-       cout << "Invalid choice! Exiting...\n";
+        cout << "Invalid choice! Exiting...\n";
     }
     cout << "\n================ THANK YOU =================\n";
     return 0;
@@ -61,7 +61,7 @@ void registation::signup() {
         file << name << "|" << number << "|" << hospital << "|" << certificate
              << "|" << time << "|" << date << "|" << fee << endl;
         file.close();
-        cout << "\n✅ Doctor account created successfully!\n";
+        cout << "\ Doctor account created successfully!\n";
     }
     else if(option == 2) {
         cout << "\n==== Patient Sign-up ====\n";
@@ -71,11 +71,10 @@ void registation::signup() {
         getline(cin, number);
         cout << "Enter your illness: ";
         getline(cin, illness);
-
         file.open("patient.txt", ios::app);
         file << name << "|" << number << "|" << illness << endl;
         file.close();
-        cout << "\n✅Patient account created successfully!\n";
+        cout << "\nPatient account created successfully!\n";
     }
     else {
         cout << "Invalid choice!\n";
@@ -106,7 +105,6 @@ void registation::login() {
             getline(ss, number, '|');
             getline(ss, hospital, '|');
             getline(ss, cert, '|');
-
             if(name == username && number == usernumber) {
                 cout << "\nLogin successful...!\n";
                 cout << "Doctor: " << name << endl;
@@ -156,9 +154,13 @@ void registation::login() {
                 found = true;
             }
         }
-        if(!found) cout << "❌ Incorrect name or number!\n";
-        file.close();
-        search_doctor_by_hospital();
+        if(!found) {
+    cout << "❌ Incorrect name or number!\n";
+    file.close();
+    return;
+} else {
+    search_doctor();
+}
     }
 }
 // ------------ ADD HOSPITAL ------------
@@ -179,7 +181,7 @@ void registation::addHospital() {
     file.open("hospital.txt", ios::app);
     file << username << "|" << usernumber << "|" << hospital << "|" << room << "|" << speciality << "|" << time << "|" << date << "|" << fee << endl;
     file.close();
-   cout << "\n✅ Hospital details added successfully!\n";
+    cout << "\n Hospital details added successfully!\n";
 }
 // ------------ SHOW APPOINTMENTS ------------
 void registation::showAppointments() {
@@ -210,139 +212,144 @@ void registation::showAppointments() {
     if(!found) cout << "No appointments yet!\n";
     file.close();
 }
-// ---------------- SEARCH DOCTOR BY HOSPITAL + BOOKING ----------------
-void registation::search_doctor_by_hospital() {
-    cout << "\nDo you want to search doctor by hospital? (y/n): ";
-    char ch;
-    cin >> ch;
+// ------------ SEARCH DOCTOR ------------
+void registation::search_doctor() {
+    int searchOption;
+    cout << "\nSearch doctor by:\n";
+    cout << "1. Hospital\n";
+    cout << "2. Speciality\n";
+    cout << "3. See all available doctors\n";
+    cout << "Enter choice: ";
+    cin >> searchOption;
     cin.ignore();
-    if(ch != 'y' && ch != 'Y') return;
-    string searchHospital;
-    cout << "Enter Hospital Name to search: ";
-    getline(cin, searchHospital);
-    file.open("doctor.txt", ios::in);
+    string line;
     bool doctorFound = false;
-    string doctorLine;
-    while(getline(file, doctorLine)) {
-        stringstream ss(doctorLine);
-        string dname, dnumber, hospitalname, certificate, dtime, ddate, dfee;
-        getline(ss, dname, '|');
-        getline(ss, dnumber, '|');
-        getline(ss, hospitalname, '|');
-        getline(ss, certificate, '|');
-        getline(ss, dtime, '|');
-        getline(ss, ddate, '|');
-        getline(ss, dfee, '|');
-        if(hospitalname == searchHospital) {
-            doctorFound = true;
-            cout << "\nDoctor Name: " << dname
-                 << "\nNumber: " << dnumber
-                 << "\nHospital: " << hospitalname
-                 << "\nCertificate: " << certificate
-                 << "\nTime: " << dtime
-                 << "\nDate: " << ddate
-                 << "\nFee: " << dfee << endl;
-            cout << "\nDo you want to book this doctor? (y/n): ";
-            char book;
-            cin >> book;
-            cin.ignore();
-            if(book == 'y' || book == 'Y') {
-                string bkash;
-                cout << "Enter your Bkash number for payment: ";
-                getline(cin, bkash);
-                cout << "Processing payment...";
-                cout << "\nPayment Successful!\n";
-                fstream serialFile;
-                serialFile.open("appointment.txt", ios::app);
-                int serial = rand() % 20 + 1;
-                serialFile << username << "|" << usernumber << "|" << dname
-                           << "|" << hospitalname << "|" << dtime << "|" << ddate << "|" << dfee << endl;
-                serialFile.close();
-                cout << "\n✅ Your appointment booked successfully! Serial: " << serial << endl;
-                file.close();
-                return;
+    if(searchOption == 1) {
+        string searchHospital;
+        cout << "Enter Hospital Name to search: ";
+        getline(cin, searchHospital);
+        file.open("doctor.txt", ios::in);
+        while(getline(file, line)) {
+            stringstream ss(line);
+            string dname, dnumber, hospitalname, certificate, dtime, ddate, dfee;
+            getline(ss, dname, '|');
+             getline(ss, dnumber, '|');
+              getline(ss, hospitalname, '|');
+            getline(ss, certificate, '|');
+            getline(ss, dtime, '|'); getline(ss, ddate, '|');
+             getline(ss, dfee, '|');
+            if(hospitalname == searchHospital) {
+                doctorFound = true;
+                cout << "\nDoctor Name: " << dname
+                     << "\nNumber: " << dnumber
+                     << "\nHospital: " << hospitalname
+                     << "\nCertificate: " << certificate
+                     << "\nTime: " << (dtime.empty() ? "Not Available" : dtime)
+                     << "\nDate: " << (ddate.empty() ? "Not Available" : ddate)
+                     << "\nFee: " << (dfee.empty() ? "Not Set" : dfee) << endl;
+                // Booking
+                cout << "Do you want to book this doctor? (y/n): ";
+                char book; cin >> book; cin.ignore();
+                if(book == 'y' || book == 'Y') {
+                    string bkash;
+                    cout << "Enter your Bkash number for payment: ";
+                    getline(cin, bkash);
+                    fstream serialFile("appointment.txt", ios::app);
+                    int serial = rand() % 20 + 1;
+                    serialFile << username << "|" << usernumber << "|" << dname
+                               << "|" << hospitalname << "|" << dtime << "|" << ddate << "|" << dfee << endl;
+                    serialFile.close();
+                    cout << "\n Your appointment booked successfully! Serial: " << serial << endl;
+                }
             }
         }
+        file.close();
+        if(!doctorFound) cout << "No doctor found in this hospital!\n";
     }
-    file.close();
-    cout << "\nDo you want to see available doctors? (y/n): ";
-    char seeAvailable;
-    cin >> seeAvailable;
-    cin.ignore();
-    if(seeAvailable == 'y' || seeAvailable == 'Y') {
+    else if(searchOption == 2) {
+        string searchSpec;
+        cout << "Enter Speciality to search: ";
+        getline(cin, searchSpec);
+        file.open("hospital.txt", ios::in);
+        while(getline(file, line)) {
+            stringstream hs(line);
+            string hn, hnum, hname, room, spec, htime, hdate, hfee;
+            getline(hs, hn,'|');
+            getline(hs,hnum,'|');
+            getline(hs,hname,'|');
+            getline(hs,room,'|');
+            getline(hs,spec,'|');
+            getline(hs,htime,'|');
+             getline(hs,hdate,'|');
+             getline(hs,hfee,'|');
+            if(spec == searchSpec) {
+                doctorFound = true;
+                cout << "\nDoctor Name: " << hn
+                     << "\nHospital: " << hname
+                     << "\nTime: " << (htime.empty() ? "Not Available" : htime)
+                     << "\nDate: " << (hdate.empty() ? "Not Available" : hdate)
+                     << "\nFee: " << (hfee.empty() ? "Not Set" : hfee) << endl;
+                cout << "Do you want to book this doctor? (y/n): ";
+                char book; cin >> book; cin.ignore();
+                if(book == 'y' || book == 'Y') {
+                    string bkash;
+                    cout << "Enter your Bkash number for payment: ";
+                    getline(cin, bkash);
+                    fstream serialFile("appointment.txt", ios::app);
+                    int serial = rand() % 20 + 1;
+                    serialFile << username << "|" << usernumber << "|" << hn
+                               << "|" << hname << "|" << htime << "|" << hdate << "|" << hfee << endl;
+                    serialFile.close();
+                    cout << "\n Your appointment booked successfully! Serial: " << serial << endl;
+                }
+            }
+        }
+        file.close();
+        if(!doctorFound) cout << "No doctor found with this speciality!\n";
+    }
+    else if(searchOption == 3) {
         cout << "\n================ Available Doctors ================\n";
+        string doctorLine;
+        doctorFound = false;
         file.open("doctor.txt", ios::in);
         while(getline(file, doctorLine)) {
             stringstream ss(doctorLine);
             string dname, dnumber, hospitalname, certificate, dtime, ddate, dfee;
             getline(ss, dname, '|');
             getline(ss, dnumber, '|');
-            getline(ss, hospitalname, '|');
+             getline(ss, hospitalname, '|');
             getline(ss, certificate, '|');
             getline(ss, dtime, '|');
             getline(ss, ddate, '|');
             getline(ss, dfee, '|');
-            if(dtime.empty()) dtime = "Not Available";
-            if(ddate.empty()) ddate = "Not Available";
-            if(dfee.empty()) dfee = "Not Set";
+            if(dname.empty()) continue;
             cout << "Doctor Name: " << dname << endl;
             cout << "Number: " << dnumber << endl;
             cout << "Hospital: " << hospitalname << endl;
             cout << "Certificate: " << certificate << endl;
-            cout << "Time: " << dtime << endl;
-            cout << "Date: " << ddate << endl;
-            cout << "Fee: " << dfee << endl;
+            cout << "Time: " << (dtime.empty() ? "Not Available" : dtime) << endl;
+            cout << "Date: " << (ddate.empty() ? "Not Available" : ddate) << endl;
+            cout << "Fee: " << (dfee.empty() ? "Not Set" : dfee) << endl;
             cout << "-----------------------------\n";
+            doctorFound = true;
+            cout << "Do you want to book this doctor? (y/n): ";
+            char book; cin >> book; cin.ignore();
+            if(book == 'y' || book == 'Y') {
+                string bkash;
+                cout << "Enter your Bkash number for payment: ";
+                getline(cin, bkash);
+                fstream serialFile("appointment.txt", ios::app);
+                int serial = rand() % 20 + 1;
+                serialFile << username << "|" << usernumber << "|" << dname
+                           << "|" << hospitalname << "|" << dtime << "|" << ddate << "|" << dfee << endl;
+                serialFile.close();
+                cout << "\n Your appointment booked successfully! Serial: " << serial << endl;
+            }
         }
         file.close();
-        cout << "\nDo you want to book an appointment from available doctors? (y/n): ";
-        char bookAll;
-        cin >> bookAll;
-        cin.ignore();
-        if(bookAll == 'y' || bookAll == 'Y') {
-            string selectedDoctor;
-            cout << "Enter Doctor Name you want to book: ";
-            getline(cin, selectedDoctor);
-            string bkash;
-            cout << "Enter your Bkash number for payment: ";
-            getline(cin, bkash);
-            cout << "Processing payment...";
-            cout << "\nPayment Successful!\n";
-            fstream serialFile;
-            serialFile.open("appointment.txt", ios::app);
-            int serial = rand() % 20 + 1;
-            file.open("doctor.txt", ios::in);
-            string line;
-            string selHospital, selTime, selDate, selFee;
-            while(getline(file, line)) {
-                stringstream ss(line);
-                string dname, dnumber, hospitalname, certificate, dtime, ddate, dfee;
-                getline(ss, dname, '|');
-                getline(ss, dnumber, '|');
-                getline(ss, hospitalname, '|');
-                getline(ss, certificate, '|');
-                getline(ss, dtime, '|');
-                getline(ss, ddate, '|');
-                getline(ss, dfee, '|');
-
-                if(dname == selectedDoctor) {
-                    selHospital = hospitalname;
-                    selTime = dtime;
-                    selDate = ddate;
-                    selFee = dfee;
-                    break;
-                }
-            }
-            file.close();
-
-            serialFile << username << "|" << usernumber << "|" << selectedDoctor
-                       << "|" << selHospital << "|" << selTime << "|" << selDate << "|" << selFee << endl;
-            serialFile.close();
-            cout << "Your appointment booked successfully!" << endl;
-            cout << "Your Serial Number: " << serial << endl;
-        }
-    } else {
-        cout << "\nOkay, returning to menu...\n";
+        if(!doctorFound) cout << "No doctors available!\n";
+    }
+    else {
+        cout << "Invalid choice!\n";
     }
 }
-
