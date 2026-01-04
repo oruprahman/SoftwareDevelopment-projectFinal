@@ -147,7 +147,7 @@ void registation::login() {
             getline(ss, num, '|');
             getline(ss, ill, '|');
             if(n == username && num == usernumber) {
-                cout << "\n✅ Login Successful!\n";
+                cout << "\n Login Successful!\n";
                 cout << "Patient: " << n << endl;
                 cout << "Number: " << num << endl;
                 cout << "Illness: " << ill << endl;
