@@ -18,7 +18,7 @@ public:
 } obj;
 
 int main() {
-    cout << "\n================ WELCOME TO HEALTH CARE SYSTEM ================\n";
+    cout << "\n================ WELCOME TO HOSPITAL APPOINMENT MANAGEMENT SYSTEM ================\n";
     int choose;
     cout << "1. Sign Up" << endl;
     cout << "2. Login" << endl;
